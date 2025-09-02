@@ -17,5 +17,4 @@ export abstract class BaseTask {
     abstract render(): JSX.Element;
 
     abstract validate(): boolean;
-    abstract performAction(): void;
 }

@@ -3,6 +3,7 @@
 import React from 'react'
 import TaskEngine from './engine/taskEngine';
 import { FillTheBlankTask } from './tasks/FillTheBlank';
+import { MultipleChoice } from './tasks/MultipleChoice';
 
 const Home = () => {
   const taskEngine = new TaskEngine();
@@ -32,8 +33,18 @@ const Home = () => {
     }
   }))
 
-  taskEngine.addTask(new FillTheBlankTask({
+  taskEngine.addTask(new MultipleChoice({
     id: "3",
+    name: "Captial Cities",
+    location: { x: 0, y: 50 },
+    type: "multiple-choice",
+    question: "What is the capital of France?",
+    options: ["Paris", "London", "Berlin"],
+    correctIndex: 0
+  }))
+
+  taskEngine.addTask(new FillTheBlankTask({
+    id: "4",
     name: "Space facts",
     location: { x: 0, y: 100 },
     type: "fill-the-blank",
@@ -43,6 +54,16 @@ const Home = () => {
       "blank-1": "third"
     }
   }))
+
+  taskEngine.addTask(new MultipleChoice({
+    id: "5",
+    name: "Basic math",
+    location: { x: 0, y: 150 },
+    type: "multiple-choice",
+    question: "what is the answer for 1 + 1",
+    options: ["3", "2", "1"],
+    correctIndex: 1
+  }));
 
   return (
     <>

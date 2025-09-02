@@ -1,5 +1,3 @@
-// FillTheBlankTask.ts
-
 "use client";
 
 import { TaskData } from "../engine/task/task.types";
@@ -12,6 +10,7 @@ type FillTheBlankTaskData = TaskData & {
 };
 
 export class FillTheBlankTask extends BaseTask {
+    private taskData = this.task as FillTheBlankTaskData;
     private answers: { [blankId: string]: string } = {};
 
     constructor(task: FillTheBlankTaskData) {
@@ -19,11 +18,10 @@ export class FillTheBlankTask extends BaseTask {
     }
 
     render(): JSX.Element {
-        const taskData = this.task as FillTheBlankTaskData;
-        const parts = taskData.textWithBlanks.split("[blank]");
+        const parts = this.taskData.textWithBlanks.split("[blank]").slice(0, -1);
 
         const handleValidation = () => {
-            this.performAction();
+            this.validate();
         };
 
         return (
@@ -32,14 +30,14 @@ export class FillTheBlankTask extends BaseTask {
                     {parts.map((part, index) => (
                         <span key={index}>
                             {part}
-                            {index < parts.length - 1 && (
+                            {
                                 <input
                                     type="text"
                                     onChange={(e) => {
                                         this.answers[`blank-${index}`] = e.target.value.trim().toLowerCase();
                                     }}
                                 />
-                            )}
+                            }
                         </span>
                     ))}
                 </p>
@@ -51,26 +49,13 @@ export class FillTheBlankTask extends BaseTask {
     }
 
     validate(): boolean {
-        const taskData = this.task as FillTheBlankTaskData;
-        const correctAnswers = taskData.answerKey;
-
-        if (Object.keys(this.answers).length !== Object.keys(correctAnswers).length) {
-            return false;
-        }
-
-        for (const key in correctAnswers) {
+        const correctAnswers = this.taskData.answerKey;
+        Object.keys(correctAnswers).forEach(key => {
             if (this.answers[key] !== correctAnswers[key].toLowerCase()) {
                 return false;
             }
-        }
+        }); 
+        
         return true;
-    }
-
-    performAction(): void {
-        if (this.validate()) {
-            alert("Task completed successfully!");
-        } else {
-            alert("Task is incomplete or incorrect.");
-        }
     }
 }
