@@ -1,6 +1,7 @@
 "use client";
 
 import { BaseTask } from "./task/baseTask";
+import { BaseTaskData } from "./task/task.types";
 
 export default class TaskEngine {
     private tasks: Map<string, BaseTask>;
@@ -23,5 +24,9 @@ export default class TaskEngine {
 
     removeTask(id: string) {
         this.tasks.delete(id);
+    }
+
+    clear() {
+        this.tasks.clear();
     }
 }
