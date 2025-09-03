@@ -1,4 +1,4 @@
-export type TaskData = {
+export type BaseTaskData = {
     id: string;
     name: string;
     type: string;
@@ -7,4 +7,6 @@ export type TaskData = {
         x: number;
         y: number;
     }
+
+    color?: string;
 }
