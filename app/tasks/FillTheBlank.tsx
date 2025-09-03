@@ -1,61 +1,82 @@
 "use client";
 
-import { TaskData } from "../engine/task/task.types";
+import React from "react";
 import { BaseTask } from "../engine/task/baseTask";
-import { JSX } from "react";
-
-type FillTheBlankTaskData = TaskData & {
-    textWithBlanks: string;
-    answerKey: { [blankId: string]: string };
-};
+import { TaskContainer } from "../engine/components/TaskContainer/TaskContainer";
+import { FillBlankData } from "./tasks.types";
 
 export class FillTheBlankTask extends BaseTask {
-    private taskData = this.task as FillTheBlankTaskData;
-    private answers: { [blankId: string]: string } = {};
+    protected data: FillBlankData;
 
-    constructor(task: FillTheBlankTaskData) {
-        super(task);
+    constructor(data: FillBlankData) {
+        super(data);
+        this.data = data;
+
+        this.state = { userAnswers: [] };
     }
 
-    render(): JSX.Element {
-        const parts = this.taskData.textWithBlanks.split("[blank]").slice(0, -1);
-
-        const handleValidation = () => {
-            this.validate();
-        };
+    render(props = {}) {
+        const parts = this.data.text.split('___');
 
         return (
-            <div>
-                <p>
-                    {parts.map((part, index) => (
-                        <span key={index}>
+            <TaskContainer
+                task={this.data}
+                color="#3b82f6"
+                onValidate={() => {
+                    const result = this.validate();
+                    alert(result.message);
+                }}
+                {...props}
+            >
+                <div style={{ lineHeight: '1.6' }}>
+                    {parts.map((part, i) => (
+                        <span key={i}>
                             {part}
-                            {
+                            {i < parts.length - 1 && (
                                 <input
                                     type="text"
+                                    style={{
+                                        display: 'inline-block',
+                                        width: '80px',
+                                        margin: '0 4px',
+                                        padding: '2px 6px',
+                                        border: '1px solid #ccc',
+                                        borderRadius: '3px'
+                                    }}
                                     onChange={(e) => {
-                                        this.answers[`blank-${index}`] = e.target.value.trim().toLowerCase();
+                                        this.state.userAnswers[i] = e.target.value.trim().toLowerCase();
                                     }}
                                 />
-                            }
+                            )}
                         </span>
                     ))}
-                </p>
-                <button onClick={handleValidation}>
-                    Validate
-                </button>
-            </div>
+                </div>
+            </TaskContainer>
         );
     }
 
-    validate(): boolean {
-        const correctAnswers = this.taskData.answerKey;
-        Object.keys(correctAnswers).forEach(key => {
-            if (this.answers[key] !== correctAnswers[key].toLowerCase()) {
-                return false;
-            }
-        }); 
-        
-        return true;
+    validate() {
+        const correct = this.data.answers.every((answer, i) =>
+            this.state.userAnswers[i]?.toLowerCase() === answer.toLowerCase()
+        );
+        return {
+            isValid: correct,
+            message: correct ? "✅ Correct!" : "❌ Try again!"
+        };
+    }
+
+    getConfig() {
+        return {
+            type: 'fill-blank',
+            text: this.data.text,
+            answers: this.data.answers
+        };
+    }
+
+    clone() {
+        return new FillTheBlankTask({
+            ...this.data,
+            id: `${this.data.id}-copy-${Date.now()}`
+        });
     }
 }

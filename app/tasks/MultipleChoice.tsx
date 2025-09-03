@@ -1,63 +1,70 @@
 "use client";
 
-import { JSX } from "react";
+import React from "react";
 import { BaseTask } from "../engine/task/baseTask";
-import { TaskData } from "../engine/task/task.types";
-
-
-type MultipleChoiceTaskData = TaskData & {
-    question: string;
-    options: string[];
-    correctIndex: number;
-};
-
+import { TaskContainer } from "../engine/components/TaskContainer/TaskContainer";
+import { MultipleChoiceData } from "./tasks.types";
+import { TaskField } from "../engine/components/TaskField/TaskField";
 
 export class MultipleChoice extends BaseTask {
-    private taskData = this.task as MultipleChoiceTaskData;
-    private selectedIndex: number = -1;
+    protected data: MultipleChoiceData;
 
-    constructor(task: MultipleChoiceTaskData) {
-        super(task);
+    constructor(data: MultipleChoiceData) {
+        super(data);
+        this.data = data;
+
+        this.state = { selected: -1 };
     }
 
-    render(): JSX.Element {
-        const handleSubmit = () => {
-            const isValid = this.validate();
-
-            if (isValid) {
-                alert("The answer is correct");
-                return;
-            }
-
-            alert("The answer is incorrect");
-        }
-
+    render(props = {}) {
         return (
-            <div>
-                <p>{this.taskData.question}</p>
-                {
-                    this.taskData.options.map((option, idx) => {
-                        const id = `${this.taskData.name}-${idx}`;
-
-                        return (
-                            <div key={idx}>
-                                <input
-                                    type="radio"
-                                    id={id}
-                                    name={this.taskData.name}
-                                    value={idx}
-                                    onChange={(e) => this.selectedIndex = parseInt(e.target.value)}
-                                />
-                                <label htmlFor={id}>{option}</label>
-                            </div>
-                        )
-                    })
-                }
-                <button onClick={handleSubmit}>Validate</button>
-            </div>)
+            <TaskContainer
+                task={this.data}
+                color="#10b981"
+                onValidate={() => {
+                    const result = this.validate();
+                    alert(result.message);
+                }}
+                {...props}
+            >
+                <div style={{ marginBottom: '12px', fontWeight: '500' }}>
+                    {this.data.question}
+                </div>
+                <TaskField
+                    type="radio"
+                    label=""
+                    value={this.data.options[this.state.selected]}
+                    options={this.data.options}
+                    onChange={(value) => {
+                        this.state.selected = this.data.options.indexOf(value);
+                    }}
+                />
+            </TaskContainer>
+        );
     }
 
-    validate(): boolean {
-        return this.selectedIndex === this.taskData.correctIndex;
+    validate() {
+        const correct = this.state.selected === this.data.correctIndex;
+        
+        return {
+            isValid: correct,
+            message: correct ? "✅ Correct!" : "❌ Try again!"
+        };
+    }
+
+    getConfig() {
+        return {
+            type: 'multiple-choice',
+            question: this.data.question,
+            options: this.data.options,
+            correct: this.data.correctIndex
+        };
+    }
+
+    clone() {
+        return new MultipleChoice({
+            ...this.data,
+            id: `${this.data.id}-copy-${Date.now()}`
+        });
     }
 }
