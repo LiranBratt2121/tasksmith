@@ -43,7 +43,7 @@ export class MathTask extends BaseTask {
     validate() {
         const userNum = parseFloat(this.state.userAnswer);
         const correct = userNum === this.data.answer;
-        
+
         return {
             isValid: correct,
             message: correct ? "✅ Correct!" : `❌ The answer is ${this.data.answer}`
@@ -58,10 +58,30 @@ export class MathTask extends BaseTask {
         };
     }
 
-    clone() {
+    clone(): MathTask {
         return new MathTask({
             ...this.data,
             id: `${this.data.id}-copy-${Date.now()}`
         });
+    }
+
+    getEdibleFields() {
+        return {
+            name: {
+                type: 'text' as const,
+                label: 'Task Name',
+                value: this.data.name,
+            },
+            expression: {
+                type: 'text' as const,
+                label: 'Math Expression',
+                value: this.data.expression,
+            },
+            answer: {
+                type: 'text' as const,
+                label: 'Correct Answer',
+                value: this.data.answer.toString(),
+            },
+        };
     }
 }

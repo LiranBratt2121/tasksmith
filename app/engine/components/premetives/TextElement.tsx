@@ -23,7 +23,7 @@ const TextElement = ({ value, label, onChange, }: PremetiveProps) => {
             <TextLable>{label}</TextLable>
             <TextInput
                 type="text"
-                value={value || ''}
+                defaultValue={value || ''}
                 onChange={(e) => onChange(e.target.value)}
             />
         </div>

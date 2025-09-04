@@ -45,7 +45,7 @@ export class MultipleChoice extends BaseTask {
 
     validate() {
         const correct = this.state.selected === this.data.correctIndex;
-        
+
         return {
             isValid: correct,
             message: correct ? "✅ Correct!" : "❌ Try again!"
@@ -61,10 +61,35 @@ export class MultipleChoice extends BaseTask {
         };
     }
 
-    clone() {
+    clone(): MultipleChoice {
         return new MultipleChoice({
             ...this.data,
             id: `${this.data.id}-copy-${Date.now()}`
         });
+    }
+
+    getEdibleFields() {
+        return {
+            name: {
+                type: 'text' as const,
+                label: 'Task Name',
+                value: this.data.name,
+            },
+            question: {
+                type: 'text' as const,
+                label: 'Question',
+                value: this.data.question,
+            },
+            options: {
+                type: 'text' as const,
+                label: 'Options (comma-separated)',
+                value: this.data.options.join(', '),
+            },
+            correctIndex: {
+                type: 'text' as const, 
+                label: 'Correct Option Index (0-based)',
+                value: this.data.correctIndex.toString(),
+            },
+        };
     }
 }

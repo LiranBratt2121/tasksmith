@@ -73,10 +73,30 @@ export class FillTheBlankTask extends BaseTask {
         };
     }
 
-    clone() {
+    clone(): BaseTask {
         return new FillTheBlankTask({
             ...this.data,
             id: `${this.data.id}-copy-${Date.now()}`
         });
+    }
+
+    getEdibleFields() {
+        return {
+            name: {
+                type: 'text' as const,
+                label: 'Task Name',
+                value: this.data.name,
+            },
+            text: {
+                type: 'text' as const,
+                label: 'Sentence with Blanks (use "___")',
+                value: this.data.text,
+            },
+            answers: {
+                type: 'text' as const,
+                label: 'Answers (comma-separated)',
+                value: this.data.answers.join(', '),
+            },
+        };
     }
 }
