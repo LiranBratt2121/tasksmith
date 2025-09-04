@@ -1,10 +1,10 @@
 import styled from '@emotion/styled';
 
 export const StyledTaskContainer = styled.div<{
-    top: number,
-    left: number,
-    color: string,
-    isDragging: boolean
+  top: number,
+  left: number,
+  color: string,
+  isDragging: boolean
 }>`
   position: absolute;
   top: ${(props) => props.top}px;
@@ -15,7 +15,7 @@ export const StyledTaskContainer = styled.div<{
   padding: 16px;
   background-color: white;
   box-shadow: ${(props) =>
-        props.isDragging ? '0 8px 25px rgba(0,0,0,0.3)' : '0 4px 12px rgba(0,0,0,0.1)'};
+    props.isDragging ? '0 8px 25px rgba(0,0,0,0.3)' : '0 4px 12px rgba(0,0,0,0.1)'};
   cursor: ${(props) => (props.isDragging ? 'grabbing' : 'grab')};
   z-index: ${(props) => (props.isDragging ? 1000 : 1)};
   transform: ${(props) => (props.isDragging ? 'scale(1.02)' : 'scale(1)')};
@@ -58,5 +58,9 @@ export const ValidateButton = styled.button<{ color: string }>`
 
   &:hover {
     opacity: 0.9;
+    transform: scale(1.05);
   }
 `;
+
+
+

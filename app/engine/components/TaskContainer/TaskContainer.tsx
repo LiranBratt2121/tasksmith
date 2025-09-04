@@ -5,8 +5,9 @@ import {
     StyledTaskHeader,
     ColorCircle,
     TaskTitle,
-    ValidateButton
+    ValidateButton,
 } from './TaskContainer.styles';
+import OptionsMenu from "./components/OptionMenu";
 
 interface TaskContainerProps {
     task: BaseTaskData;
@@ -15,6 +16,8 @@ interface TaskContainerProps {
     isDragging?: boolean;
     color?: string;
     onDragStart?: (e: React.MouseEvent) => void;
+    remove?: () => void;
+    edit?: () => void;
 }
 
 export const TaskContainer = ({
@@ -23,7 +26,9 @@ export const TaskContainer = ({
     children,
     onValidate,
     isDragging,
-    onDragStart
+    onDragStart,
+    remove: removeTask,
+    edit: editTask
 }: TaskContainerProps) => {
     return (
         <StyledTaskContainer
@@ -38,6 +43,11 @@ export const TaskContainer = ({
                 <TaskTitle color={color}>
                     {task.name}
                 </TaskTitle>
+
+                <OptionsMenu
+                    editTask={() => editTask && editTask()}
+                    removeTask={() => removeTask && removeTask()} />
+
             </StyledTaskHeader>
 
             <div className="task-content">
