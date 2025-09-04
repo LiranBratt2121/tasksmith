@@ -5,6 +5,7 @@ import { FillTheBlankTask } from './tasks/FillTheBlank';
 import { MultipleChoice } from './tasks/MultipleChoice';
 import { MathTask } from './tasks/Math';
 import { BaseTask } from './engine/task/baseTask';
+import TaskEditor from './engine/components/TaskEditor/TaskEditor';
 import {
   AppContainer,
   Toolbar,
@@ -19,6 +20,7 @@ import {
 const Home = () => {
   const [taskEngine] = useState(() => new TaskEngine());
   const [tasks, setTasks] = useState<BaseTask[]>([]);
+  const [editingTask, setEditingTask] = useState<BaseTask | null>(null);
 
   const zeroState = {
     isDragging: false,
@@ -62,7 +64,7 @@ const Home = () => {
   const addNewTask = (type: string) => {
     let newTask;
     const id = `task-${Date.now()}`;
-    const randomX = Math.random() * 400;
+    const randomX = Math.random() * 400 + 50;
     const randomY = Math.random() * 200 + 100;
 
     switch (type) {
@@ -110,6 +112,26 @@ const Home = () => {
     setTasks([]);
   }
 
+  const handleEditTask = (taskId: string) => {
+    const task = taskEngine.getTask(taskId);
+    if (task) {
+      setEditingTask(task);
+    }
+  };
+
+  const handleSaveTaskEdits = (taskId: string, updates: Record<string, any>) => {
+    const task = taskEngine.getTask(taskId);
+    if (task) {
+      task.updateData(updates);
+      setTasks([...taskEngine.getAllTasks()]);
+    }
+    setEditingTask(null);
+  };
+
+  const handleCloseEditor = () => {
+    setEditingTask(null);
+  };
+
   return (
     <AppContainer
       onMouseMove={handleMouseMove}
@@ -143,10 +165,23 @@ const Home = () => {
           task.render({
             key: task.id(),
             isDragging: dragState?.taskId === task.id(),
-            onDragStart: (e: React.MouseEvent) => handleDragStart(task.id(), e)
+            onDragStart: (e: React.MouseEvent) => handleDragStart(task.id(), e),
+            remove: () => {
+              taskEngine.removeTask(task.id());
+              setTasks([...taskEngine.getAllTasks()]);
+            },
+            edit: () => handleEditTask(task.id())
           })
         )}
       </CanvasContainer>
+
+      {editingTask && (
+        <TaskEditor
+          task={editingTask}
+          onSave={handleSaveTaskEdits}
+          onClose={handleCloseEditor}
+        />
+      )}
     </AppContainer>
   );
 };
